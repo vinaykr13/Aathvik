@@ -13,7 +13,7 @@ jobs:
 
       - name: Extract AATHVIK project
         run: |
-          unzip -o AATHVIK_GitHub_Build_Ready.zip -d aathvik
+          unzip unzip -o AATHVIK_Attractive_UI_V3_Animated_Video_References.zip -d aathvik
           cd aathvik
           chmod +x gradlew
 

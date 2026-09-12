@@ -4,397 +4,327 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AATHVIK — Plan • Prepare • Achieve</title>
-  
-  <!-- CSS व React CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #f8fafc; }
     .mono { font-family: monospace; }
   </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100">
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <!-- हेडर -->
+  <header class="border-b border-slate-800 bg-[#0f172a] px-6 py-3 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-indigo-600/30">A</div>
+      <div>
+        <h1 class="font-black text-lg tracking-wider text-white">AATHVIK</h1>
+        <p class="text-[10px] text-indigo-400 font-bold tracking-widest">PLAN • PREPARE • ACHIEVE</p>
+      </div>
+    </div>
+    <select id="examSelect" onchange="updateExam(this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold text-indigo-300 rounded-lg px-3 py-1.5 focus:outline-none">
+      <option>SSC CGL 2025-26</option>
+      <option>RRB NTPC (Railway)</option>
+      <option>UP Police SI / Constable</option>
+    </select>
+  </header>
 
-    // सिलेबस व कॉन्सेप्ट्स डेटा
-    const CONCEPTS = [
-      {
-        id: "CON_1",
-        subject: "गणित (Maths)",
-        title: "प्रतिशत एवं भिन्न (Percentage & Multipliers)",
-        exams: "SSC • Railway • UP SI",
-        hindi: "प्रतिशत का अर्थ है 'प्रति 100 पर'। एग्जाम में तेजी से हल करने के लिए मानक भिन्न याद रखें।",
-        trick: "1/7 = 14.28% | 1/8 = 12.5% | मूल्य 25% (1/4) बढ़ा तो खपत 20% (1/5) कम करनी होगी।",
-        formula: "Net Change% = a + b + (ab / 100)"
-      },
-      {
-        id: "CON_2",
-        subject: "सामान्य हिन्दी (General Hindi)",
-        title: "संधि पहचान (Swar Sandhi Shortcuts)",
-        exams: "UP Police SI • Constable",
-        hindi: "दो वर्णों के मेल से उत्पन्न विकार को संधि कहते हैं। स्वर संधि के 5 मुख्य भेद हैं।",
-        trick: "गुण संधि = 1 मात्रा (े, ो) | वृद्धि संधि = 2 मात्रा (ै, ौ) | यण = य, व से पहले आधा अक्षर।",
-        formula: "इति + आदि = इत्यादि (यण संधि)"
-      },
-      {
-        id: "CON_3",
-        subject: "मूल विधि व संविधान (Polity & Law)",
-        title: "मौलिक अधिकार (Articles 12-35) व 5 रिट",
-        exams: "UP SI • SSC CGL • RRB",
-        hindi: "संविधान के भाग 3 को भारत का मैग्नाकार्टा कहा जाता है। डॉ. अम्बेडकर ने अनुच्छेद 32 को 'संविधान की आत्मा' कहा।",
-        trick: "5 रिट: बंदी प्रत्यक्षीकरण, परमादेश (Mandamus), प्रतिषेध, उत्प्रेषण, अधिकार पृच्छा।",
-        formula: "सुप्रीम कोर्ट: Art 32 | हाई कोर्ट: Art 226"
-      }
-    ];
+  <div class="flex-1 flex flex-col md:flex-row">
+    
+    <!-- साइडबार नेविगेशन -->
+    <aside class="w-full md:w-64 bg-[#0d1322] border-r border-slate-800 p-4 space-y-2">
+      <button onclick="showTab('dashboard')" id="btn-dashboard" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">📊 आज का डैशबोर्ड</button>
+      <button onclick="showTab('learn')" id="btn-learn" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800 transition">📖 कॉन्सेप्ट व ट्रिक्स</button>
+      <button onclick="showTab('cbt')" id="btn-cbt" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800 transition">⏱️ CBT मॉक टेस्ट</button>
+      <button onclick="showTab('mistakes')" id="btn-mistakes" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800 flex justify-between items-center transition">
+        <span>⚠️ मिस्टेक बुक</span>
+        <span id="mistakeBadge" class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded text-[10px]">0</span>
+      </button>
+      <button onclick="showTab('vacancies')" id="btn-vacancies" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800 transition">🔔 सरकारी भर्तियां</button>
+    </aside>
 
-    // पिछले वर्षों के प्रश्न (PYQs)
-    const QUESTIONS = [
-      {
-        id: "Q1",
-        tag: "OFFICIAL SSC CGL PYQ",
-        year: "2023 Shift-1",
-        text: "किसी वस्तु के मूल्य में 20% की कमी होने पर एक ग्राहक ₹160 में 4 किग्रा अधिक खरीद सकता है। वस्तु का वास्तविक मूल्य (प्रति किग्रा) क्या था?",
-        options: ["₹8", "₹10", "₹12", "₹15"],
-        correct: 1,
-        solution: "बचत = 160 का 20% = ₹32। 4 किग्रा की कीमत = ₹32 -> नया मूल्य = ₹8/किग्रा। वास्तविक मूल्य = 8 / 0.80 = ₹10/किग्रा।"
-      },
-      {
-        id: "Q2",
-        tag: "OFFICIAL UP SI PYQ",
-        year: "2021 Batch-1",
-        text: "'सदैव' शब्द में कौन-सी संधि है?",
-        options: ["गुण स्वर संधि", "दीर्घ स्वर संधि", "वृद्धि स्वर संधि", "यण स्वर संधि"],
-        correct: 2,
-        solution: "'सदा + एव = सदैव' (आ + ए = ऐ)। दो मात्राएं (ै) वृद्धि स्वर संधि की पहचान हैं।"
-      },
-      {
-        id: "Q3",
-        tag: "OFFICIAL RRB NTPC PYQ",
-        year: "2021 CBT-1",
-        text: "भारतीय संविधान का कौन-सा अनुच्छेद 'विधि के समक्ष समता' (Right to Equality) प्रदान करता है?",
-        options: ["अनुच्छेद 14", "अनुच्छेद 19", "अनुच्छेद 21", "अनुच्छेद 32"],
-        correct: 0,
-        solution: "अनुच्छेद 14 भारत के राज्यक्षेत्र में किसी व्यक्ति को विधि के समक्ष समता या विधियों के समान संरक्षण से वंचित नहीं करेगा।"
-      }
-    ];
-
-    // सरकारी भर्ती डेटा
-    const VACANCIES = [
-      {
-        org: "Staff Selection Commission",
-        title: "SSC CGL Exam 2025-26",
-        posts: "17,727 Posts (Tentative)",
-        dates: "Tier-1 CBT: Scheduled Active Cycle",
-        status: "APPLICATION OPEN",
-        link: "https://ssc.gov.in"
-      },
-      {
-        org: "Railway Recruitment Boards",
-        title: "RRB NTPC (CEN 05/2024)",
-        posts: "11,558 Posts",
-        dates: "CBT-1: Active Schedule Cycle",
-        status: "EXAM SCHEDULED",
-        link: "https://indianrailways.gov.in"
-      },
-      {
-        org: "UPPRPB",
-        title: "UP Police Sub-Inspector",
-        posts: "3,400+ Posts",
-        dates: "Notification / Online Form",
-        status: "COMING SOON",
-        link: "http://uppbpb.gov.in"
-      }
-    ];
-
-    function App() {
-      const [tab, setTab] = useState("dashboard");
-      const [exam, setExam] = useState("SSC CGL 2025-26");
+    <!-- मुख्य कंटेंट एरिया -->
+    <main class="flex-1 p-6 max-w-5xl mx-auto w-full">
       
-      const [cbtRunning, setCbtRunning] = useState(false);
-      const [timeLeft, setTimeLeft] = useState(300);
-      const [selectedAnswers, setSelectedAnswers] = useState({});
-      const [cbtResult, setCbtResult] = useState(null);
-      const [mistakes, setMistakes] = useState([]);
+      <!-- 1. DASHBOARD -->
+      <section id="tab-dashboard" class="space-y-6">
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-indigo-900/60 to-slate-900 border border-indigo-500/30">
+          <span id="targetExamBadge" class="text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-md">टारगेट: SSC CGL 2025-26</span>
+          <h2 class="text-2xl font-extrabold text-white mt-3">नमस्ते एस्पिरेंट! आज का प्लान तैयार है।</h2>
+          <p class="text-xs text-slate-300 mt-1">आज का लक्ष्य: 1 कॉन्सेप्ट सीखें, 1 मिनी टेस्ट दें और गलतियों को सुधारें।</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button onclick="showTab('learn')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold">कॉन्सेप्ट पढ़ना शुरू करें →</button>
+            <button onclick="showTab('cbt')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs font-bold">5-मिनट CBT टेस्ट दें →</button>
+          </div>
+        </div>
 
-      useEffect(() => {
-        if (window.lucide) window.lucide.createIcons();
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="text-xs text-slate-400">डेली स्ट्रीक</div>
+            <div class="text-2xl font-bold text-amber-400 mt-1">🔥 14 Days</div>
+          </div>
+          <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="text-xs text-slate-400">सटीकता (Accuracy)</div>
+            <div class="text-2xl font-bold text-emerald-400 mt-1">82%</div>
+          </div>
+          <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl col-span-2 sm:col-span-1">
+            <div class="text-xs text-slate-400">मिस्टेक बुक में प्रश्न</div>
+            <div id="dashMistakeCount" class="text-2xl font-bold text-red-400 mt-1">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CONCEPTS -->
+      <section id="tab-learn" class="space-y-4 hidden">
+        <h2 class="text-lg font-bold text-white">कॉमन कॉन्सेप्ट इंजन (Common Concept Engine)</h2>
+        <p class="text-xs text-slate-400">एक बार समझें, SSC, Railway और UP SI तीनों में सीधे इस्तेमाल करें।</p>
+        <div id="conceptsList" class="space-y-4 mt-3"></div>
+      </section>
+
+      <!-- 3. CBT TEST -->
+      <section id="tab-cbt" class="space-y-6 hidden">
+        <div id="cbt-start-view" class="p-8 bg-slate-900 border border-slate-800 rounded-2xl text-center max-w-lg mx-auto space-y-4">
+          <h2 class="text-xl font-bold text-white">ऑनलाइन CBT परीक्षा सिम्युलेटर</h2>
+          <p class="text-xs text-slate-400">असली परीक्षा हॉल जैसा अनुभव: टाइमर, सही उत्तर (+2), नेगेटिव मार्किंग (-0.5)।</p>
+          <button onclick="startCbtTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs">टेस्ट अभी शुरू करें →</button>
+        </div>
+
+        <div id="cbt-running-view" class="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-6 hidden">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+            <span class="text-xs font-bold text-slate-300">कुल प्रश्न: 3</span>
+            <div id="cbtTimer" class="text-sm font-bold text-red-400 mono bg-red-500/10 px-3 py-1 rounded border border-red-500/20">समय: 05:00</div>
+          </div>
+          <div id="cbtQuestionsContainer" class="space-y-6"></div>
+          <button onclick="submitCbtTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs">फाइनल सबमिट करें (Submit Test)</button>
+        </div>
+
+        <div id="cbt-result-view" class="p-6 bg-slate-900 border border-slate-800 rounded-2xl max-w-md mx-auto text-center space-y-4 hidden">
+          <h2 class="text-lg font-bold text-white">आपका स्कोर कार्ड</h2>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="p-3 bg-slate-950 rounded-xl">
+              <div class="text-[10px] text-slate-400">प्राप्तांक</div>
+              <div id="resScore" class="text-xl font-bold text-indigo-400 mono">0</div>
+            </div>
+            <div class="p-3 bg-slate-950 rounded-xl">
+              <div class="text-[10px] text-slate-400">सही</div>
+              <div id="resCorrect" class="text-xl font-bold text-emerald-400 mono">0</div>
+            </div>
+            <div class="p-3 bg-slate-950 rounded-xl">
+              <div class="text-[10px] text-slate-400">गलत</div>
+              <div id="resWrong" class="text-xl font-bold text-red-400 mono">0</div>
+            </div>
+          </div>
+          <p class="text-xs text-amber-400">सारे गलत सवाल अपने आप मिस्टेक बुक में जोड़ दिए गए हैं।</p>
+          <button onclick="showTab('mistakes')" class="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-xl">मिस्टेक बुक में कमियां देखें →</button>
+        </div>
+      </section>
+
+      <!-- 4. MISTAKES -->
+      <section id="tab-mistakes" class="space-y-4 hidden">
+        <h2 class="text-lg font-bold text-white">स्मार्ट मिस्टेक नोटबुक (My Mistake Book)</h2>
+        <p class="text-xs text-slate-400">जो सवाल टेस्ट में गलत हुए हैं, उनका सही हल यहाँ दोबारा समझें ताकि आगे गलती न हो।</p>
+        <div id="mistakesList" class="space-y-3"></div>
+      </section>
+
+      <!-- 5. VACANCIES -->
+      <section id="tab-vacancies" class="space-y-4 hidden">
+        <h2 class="text-lg font-bold text-white">वेरिफाइड सरकारी भर्ती पोर्टल</h2>
+        <p class="text-xs text-slate-400">केवल आधिकारिक सरकारी वेबसाइटों से सत्यापित तिथियां और विवरण।</p>
+        <div id="vacanciesList" class="space-y-3 mt-3"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // डेटा
+    const CONCEPTS = [
+      { subject: "गणित (Maths)", title: "प्रतिशत एवं भिन्न (Percentage Shortcuts)", exams: "SSC • Railway • UP SI", hindi: "प्रतिशत का अर्थ है 'प्रति 100 पर'। मानक भिन्नों का मान याद रखें।", trick: "1/7 = 14.28% | 1/8 = 12.5% | मूल्य 25% बढ़ा तो खपत 20% कम होगी।", formula: "Net Change% = a + b + (ab / 100)" },
+      { subject: "सामान्य हिन्दी", title: "संधि पहचान (Swar Sandhi)", exams: "UP Police SI • Constable", hindi: "दो वर्णों के मेल से उत्पन्न विकार को संधि कहते हैं।", trick: "गुण = 1 मात्रा (े, ो) | वृद्धि = 2 मात्रा (ै, ौ) | यण = आधा अक्षर।", formula: "इति + आदि = इत्यादि" },
+      { subject: "मूल विधि व संविधान", title: "मौलिक अधिकार (Articles 12-35) व रिट", exams: "UP SI • SSC CGL • RRB", hindi: "भाग 3 को भारत का मैग्नाकार्टा कहा जाता है।", trick: "5 रिट: बंदी प्रत्यक्षीकरण, परमादेश, प्रतिषेध, उत्प्रेषण, अधिकार पृच्छा।", formula: "Supreme Court: Art 32 | High Court: Art 226" }
+    ];
+
+    const QUESTIONS = [
+      { id: 0, tag: "OFFICIAL SSC CGL PYQ", year: "2023", text: "किसी वस्तु के मूल्य में 20% की कमी होने पर ग्राहक ₹160 में 4 किग्रा अधिक खरीद सकता है। वस्तु का वास्तविक मूल्य क्या था?", options: ["₹8", "₹10", "₹12", "₹15"], correct: 1, solution: "बचत = 160 का 20% = ₹32 -> नया मूल्य ₹8/किग्रा। वास्तविक मूल्य = 8 / 0.8 = ₹10/किग्रा।" },
+      { id: 1, tag: "OFFICIAL UP SI PYQ", year: "2021", text: "'सदैव' शब्द में कौन-सी संधि है?", options: ["गुण स्वर संधि", "दीर्घ स्वर संधि", "वृद्धि स्वर संधि", "यण स्वर संधि"], correct: 2, solution: "'सदा + एव = सदैव' (आ + ए = ऐ)। दो मात्राएं (ै) वृद्धि संधि की पहचान हैं।" },
+      { id: 2, tag: "OFFICIAL RRB NTPC PYQ", year: "2021", text: "भारतीय संविधान का कौन-सा अनुच्छेद 'विधि के समक्ष समता' का अधिकार देता है?", options: ["अनुच्छेद 14", "अनुच्छेद 19", "अनुच्छेद 21", "अनुच्छेद 32"], correct: 0, solution: "अनुच्छेद 14 विधि के समक्ष समता या समान संरक्षण प्रदान करता है।" }
+    ];
+
+    const VACANCIES = [
+      { org: "Staff Selection Commission", title: "SSC CGL Exam 2025-26", posts: "17,727 Posts", dates: "Tier-1 CBT Active Cycle", status: "APPLICATION OPEN", link: "https://ssc.gov.in" },
+      { org: "Railway Recruitment Boards", title: "RRB NTPC (CEN 05/2024)", posts: "11,558 Posts", dates: "CBT-1 Active Schedule", status: "EXAM SCHEDULED", link: "https://indianrailways.gov.in" },
+      { org: "UPPRPB", title: "UP Police Sub-Inspector", posts: "3,400+ Posts", dates: "Official Calendar Stage", status: "COMING SOON", link: "http://uppbpb.gov.in" }
+    ];
+
+    let mistakes = [];
+    let selectedAnswers = {};
+    let timerInterval = null;
+    let timeLeft = 300;
+
+    function showTab(tabId) {
+      ['dashboard', 'learn', 'cbt', 'mistakes', 'vacancies'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        document.getElementById('btn-' + t).className = 'nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800 transition';
+      });
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      document.getElementById('btn-' + tabId).className = 'nav-btn w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition';
+    }
+
+    function updateExam(val) {
+      document.getElementById('targetExamBadge').innerText = 'टारगेट: ' + val;
+    }
+
+    // कॉन्सेप्ट्स लोड करना
+    function renderConcepts() {
+      const container = document.getElementById('conceptsList');
+      container.innerHTML = CONCEPTS.map(c => `
+        <div class="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded">${c.subject}</span>
+            <span class="text-[11px] text-slate-400 font-medium">${c.exams}</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${c.title}</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">${c.hindi}</p>
+          <div class="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl text-xs text-amber-300">
+            <strong>⚡ एग्जाम ट्रिक:</strong> ${c.trick}
+          </div>
+          <div class="p-2.5 bg-slate-950 rounded-lg text-xs mono text-emerald-400 border border-slate-800">
+            फॉर्मूला: ${c.formula}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // CBT टेस्ट चालू करना
+    function startCbtTest() {
+      document.getElementById('cbt-start-view').classList.add('hidden');
+      document.getElementById('cbt-result-view').classList.add('hidden');
+      document.getElementById('cbt-running-view').classList.remove('hidden');
+      selectedAnswers = {};
+      timeLeft = 300;
+
+      const container = document.getElementById('cbtQuestionsContainer');
+      container.innerHTML = QUESTIONS.map((q, idx) => `
+        <div class="space-y-3">
+          <div class="flex gap-2 items-center">
+            <span class="text-[10px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded">${q.tag}</span>
+            <span class="text-xs text-slate-400">(${q.year})</span>
+          </div>
+          <p class="text-xs font-bold text-white">Q${idx + 1}. ${q.text}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${q.options.map((opt, optIdx) => `
+              <button type="button" id="opt-${idx}-${optIdx}" onclick="selectAnswer(${idx}, ${optIdx})" class="cbt-opt-${idx} p-3 text-left rounded-xl text-xs font-medium border border-slate-800 bg-slate-950 text-slate-300 hover:bg-slate-800 transition">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const m = Math.floor(timeLeft / 60);
+        const s = String(timeLeft % 60).padStart(2, '0');
+        document.getElementById('cbtTimer').innerText = `समय: ${m}:${s}`;
+        if (timeLeft <= 0) submitCbtTest();
+      }, 1000);
+    }
+
+    function selectAnswer(qIdx, optIdx) {
+      selectedAnswers[qIdx] = optIdx;
+      document.querySelectorAll(`.cbt-opt-${qIdx}`).forEach(btn => {
+        btn.className = `cbt-opt-${qIdx} p-3 text-left rounded-xl text-xs font-medium border border-slate-800 bg-slate-950 text-slate-300 hover:bg-slate-800 transition`;
+      });
+      const selected = document.getElementById(`opt-${qIdx}-${optIdx}`);
+      selected.className = `cbt-opt-${qIdx} p-3 text-left rounded-xl text-xs font-medium border border-indigo-500 bg-indigo-600 text-white transition`;
+    }
+
+    function submitCbtTest() {
+      clearInterval(timerInterval);
+      let correct = 0, wrong = 0;
+
+      QUESTIONS.forEach((q, idx) => {
+        const userAns = selectedAnswers[idx];
+        if (userAns === undefined) return;
+        if (userAns === q.correct) {
+          correct++;
+        } else {
+          wrong++;
+          mistakes.push({
+            question: q.text,
+            yourAns: q.options[userAns],
+            correctAns: q.options[q.correct],
+            solution: q.solution
+          });
+        }
       });
 
-      useEffect(() => {
-        let timer = null;
-        if (cbtRunning && timeLeft > 0) {
-          timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
-        } else if (cbtRunning && timeLeft === 0) {
-          submitTest();
-        }
-        return () => clearInterval(timer);
-      }, [cbtRunning, timeLeft]);
+      const score = (correct * 2) - (wrong * 0.5);
+      document.getElementById('resScore').innerText = score;
+      document.getElementById('resCorrect').innerText = correct;
+      document.getElementById('resWrong').innerText = wrong;
 
-      const submitTest = () => {
-        setCbtRunning(false);
-        let correct = 0;
-        let wrong = 0;
-        let newMistakes = [];
+      document.getElementById('mistakeBadge').innerText = mistakes.length;
+      document.getElementById('dashMistakeCount').innerText = mistakes.length;
+      renderMistakes();
 
-        QUESTIONS.forEach((q, idx) => {
-          const ans = selectedAnswers[idx];
-          if (ans === undefined) return;
-          if (ans === q.correct) {
-            correct++;
-          } else {
-            wrong++;
-            newMistakes.push({
-              question: q.text,
-              yourAns: q.options[ans],
-              correctAns: q.options[q.correct],
-              solution: q.solution
-            });
-          }
-        });
+      document.getElementById('cbt-running-view').classList.add('hidden');
+      document.getElementById('cbt-result-view').classList.remove('hidden');
+    }
 
-        const score = (correct * 2) - (wrong * 0.5);
-        setCbtResult({ correct, wrong, score });
-        setMistakes(prev => [...newMistakes, ...prev]);
-      };
-
-      return (
-        <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100">
-          
-          {/* Header */}
-          <header className="border-b border-slate-800 bg-[#0f172a] px-6 py-3 flex justify-between items-center sticky top-0 z-50">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-indigo-600/30">A</div>
-              <div>
-                <h1 className="font-black text-lg tracking-wider text-white">AATHVIK</h1>
-                <p className="text-[10px] text-indigo-400 font-bold tracking-widest">PLAN • PREPARE • ACHIEVE</p>
-              </div>
+    // मिस्टेक बुक लोड करना
+    function renderMistakes() {
+      const container = document.getElementById('mistakesList');
+      if (mistakes.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-400 text-xs">कोई गलती दर्ज नहीं है। एक CBT टेस्ट देकर अभ्यास करें!</div>`;
+        return;
+      }
+      container.innerHTML = mistakes.map(m => `
+        <div class="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+          <p class="text-xs font-bold text-white">${m.question}</p>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 bg-red-950/30 border border-red-500/30 rounded-lg text-red-300">
+              आपका उत्तर: ${m.yourAns} (गलत)
             </div>
+            <div class="p-2.5 bg-emerald-950/30 border border-emerald-500/30 rounded-lg text-emerald-300">
+              सही उत्तर: ${m.correctAns} (सही)
+            </div>
+          </div>
+          <div class="p-3 bg-slate-950 rounded-lg text-xs text-slate-300 border border-slate-800">
+            <strong>व्याख्या:</strong> ${m.solution}
+          </div>
+        </div>
+      `).join('');
+    }
 
-            <select 
-              value={exam} 
-              onChange={(e) => setExam(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-xs font-bold text-indigo-300 rounded-lg px-3 py-1.5 focus:outline-none"
-            >
-              <option>SSC CGL 2025-26</option>
-              <option>RRB NTPC (Railway)</option>
-              <option>UP Police SI / Constable</option>
-            </select>
-          </header>
+    // वैकेंसी लोड करना
+    function renderVacancies() {
+      const container = document.getElementById('vacanciesList');
+      container.innerHTML = VACANCIES.map(v => `
+        <div class="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <span class="text-[10px] font-bold text-indigo-400 uppercase">${v.org}</span>
+            <h3 class="text-sm font-bold text-white">${v.title}</h3>
+            <div class="text-xs text-slate-400 mt-1">${v.posts} • ${v.dates}</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[10px] font-bold px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-md">
+              ${v.status}
+            </span>
+            <a href="${v.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+              पोर्टल ↗
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
 
-          <div className="flex-1 flex flex-col md:flex-row">
-            
-            {/* Sidebar */}
-            <aside className="w-full md:w-64 bg-[#0d1322] border-r border-slate-800 p-4 space-y-2">
-              <button 
-                onClick={() => setTab("dashboard")} 
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition ${tab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
-              >
-                📊 आज का डैशबोर्ड
-              </button>
-              <button 
-                onClick={() => setTab("learn")} 
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition ${tab === 'learn' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
-              >
-                📖 सिलेबस व ट्रिक्स
-              </button>
-              <button 
-                onClick={() => { setTab("cbt"); setCbtRunning(false); setCbtResult(null); }} 
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition ${tab === 'cbt' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
-              >
-                ⏱️ CBT मॉक टेस्ट
-              </button>
-              <button 
-                onClick={() => setTab("mistakes")} 
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold flex justify-between items-center transition ${tab === 'mistakes' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
-              >
-                <span>⚠️ मिस्टेक बुक</span>
-                <span className="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded text-[10px]">{mistakes.length}</span>
-              </button>
-              <button 
-                onClick={() => setTab("vacancies")} 
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition ${tab === 'vacancies' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
-              >
-                🔔 सरकारी भर्तियां
-              </button>
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
-              
-              {/* DASHBOARD */}
-              {tab === "dashboard" && (
-                <div className="space-y-6">
-                  <div className="p-6 rounded-2xl bg-gradient-to-r from-indigo-900/60 to-slate-900 border border-indigo-500/30">
-                    <span className="text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-md">
-                      टारगेट: {exam}
-                    </span>
-                    <h2 className="text-2xl font-extrabold text-white mt-3">नमस्ते एस्पिरेंट! आज का प्लान तैयार है।</h2>
-                    <p className="text-xs text-slate-300 mt-1">आज का लक्ष्य: 1 कॉन्सेप्ट सीखें, 1 मिनी टेस्ट दें और गलतियों को सुधारें।</p>
-                    <div className="mt-4 flex gap-3">
-                      <button onClick={() => setTab("learn")} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold">
-                        कॉन्सेप्ट पढ़ना शुरू करें →
-                      </button>
-                      <button onClick={() => { setTab("cbt"); setCbtRunning(true); setTimeLeft(300); setCbtResult(null); setSelectedAnswers({}); }} className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs font-bold">
-                        5-मिनट CBT टेस्ट दें →
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                      <div className="text-xs text-slate-400">डेली स्ट्रीक</div>
-                      <div className="text-2xl font-bold text-amber-400 mt-1">🔥 14 Days</div>
-                    </div>
-                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                      <div className="text-xs text-slate-400">सटीकता (Accuracy)</div>
-                      <div className="text-2xl font-bold text-emerald-400 mt-1">82%</div>
-                    </div>
-                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl col-span-2 sm:col-span-1">
-                      <div className="text-xs text-slate-400">मिस्टेक बुक में प्रश्न</div>
-                      <div className="text-2xl font-bold text-red-400 mt-1">{mistakes.length}</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* CONCEPTS */}
-              {tab === "learn" && (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-bold text-white">कॉमन कॉन्सेप्ट इंजन (Common Concept Engine)</h2>
-                  <p className="text-xs text-slate-400">एक बार समझें, SSC, Railway और UP SI तीनों में सीधे इस्तेमाल करें।</p>
-                  
-                  <div className="space-y-4 mt-3">
-                    {CONCEPTS.map(c => (
-                      <div key={c.id} className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded">{c.subject}</span>
-                          <span className="text-[11px] text-slate-400 font-medium">{c.exams}</span>
-                        </div>
-                        <h3 className="text-base font-bold text-white">{c.title}</h3>
-                        <p className="text-xs text-slate-300 leading-relaxed">{c.hindi}</p>
-                        
-                        <div className="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl text-xs text-amber-300">
-                          <strong>⚡ एग्जाम शॉर्ट ट्रिक:</strong> {c.trick}
-                        </div>
-                        <div className="p-2.5 bg-slate-950 rounded-lg text-xs mono text-emerald-400 border border-slate-800">
-                          फॉर्मूला: {c.formula}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* CBT TEST */}
-              {tab === "cbt" && (
-                <div className="space-y-6">
-                  {!cbtRunning && !cbtResult && (
-                    <div className="p-8 bg-slate-900 border border-slate-800 rounded-2xl text-center max-w-lg mx-auto space-y-4">
-                      <h2 className="text-xl font-bold text-white">ऑनलाइन CBT परीक्षा सिम्युलेटर</h2>
-                      <p className="text-xs text-slate-400">असली परीक्षा हॉल जैसा अनुभव: टाइमर, सही उत्तर (+2), नेगेटिव मार्किंग (-0.5)।</p>
-                      <button 
-                        onClick={() => { setCbtRunning(true); setTimeLeft(300); setSelectedAnswers({}); }} 
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs"
-                      >
-                        टेस्ट अभी शुरू करें →
-                      </button>
-                    </div>
-                  )}
-
-                  {cbtRunning && (
-                    <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-6">
-                      <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-                        <span className="text-xs font-bold text-slate-300">कुल प्रश्न: {QUESTIONS.length}</span>
-                        <div className="text-sm font-bold text-red-400 mono bg-red-500/10 px-3 py-1 rounded border border-red-500/20">
-                          समय: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-                        </div>
-                      </div>
-
-                      <div className="space-y-6">
-                        {QUESTIONS.map((q, idx) => (
-                          <div key={q.id} className="space-y-3">
-                            <div className="flex gap-2 items-center">
-                              <span className="text-[10px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded">{q.tag}</span>
-                              <span className="text-xs text-slate-400">({q.year})</span>
-                            </div>
-                            <p className="text-xs font-bold text-white">Q{idx+1}. {q.text}</p>
-                            
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {q.options.map((opt, optIdx) => (
-                                <button
-                                  key={optIdx}
-                                  onClick={() => setSelectedAnswers(prev => ({ ...prev, [idx]: optIdx }))}
-                                  className={`p-3 text-left rounded-xl text-xs font-medium border transition ${
-                                    selectedAnswers[idx] === optIdx 
-                                      ? 'bg-indigo-600 border-indigo-500 text-white' 
-                                      : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'
-                                  }`}
-                                >
-                                  {opt}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <button 
-                        onClick={submitTest}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs"
-                      >
-                        फाइनल सबमिट करें
-                      </button>
-                    </div>
-                  )}
-
-                  {cbtResult && (
-                    <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl max-w-md mx-auto text-center space-y-4">
-                      <h2 className="text-lg font-bold text-white">आपका स्कोर कार्ड</h2>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="p-3 bg-slate-950 rounded-xl">
-                          <div className="text-[10px] text-slate-400">प्राप्तांक</div>
-                          <div className="text-xl font-bold text-indigo-400 mono">{cbtResult.score}</div>
-                        </div>
-                        <div className="p-3 bg-slate-950 rounded-xl">
-                          <div className="text-[10px] text-slate-400">सही</div>
-                          <div className="text-xl font-bold text-emerald-400 mono">{cbtResult.correct}</div>
-                        </div>
-                        <div className="p-3 bg-slate-950 rounded-xl">
-                          <div className="text-[10px] text-slate-400">गलत</div>
-                          <div className="text-xl font-bold text-red-400 mono">{cbtResult.wrong}</div>
-                        </div>
-                      </div>
-                      <button onClick={() => setTab("mistakes")} className="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-xl">
-                        मिस्टेक बुक में कमियां देखें →
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* MISTAKE BOOK */}
-              {tab === "mistakes" && (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-bold text-white">स्मार्ट मिस्टेक नोटबुक (My Mistake Book)</h2>
-                  
-                  {mistakes.length === 0 ? (
-                    <div className="p-8 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-400 text-xs">
-                      कोई गलती दर्ज नहीं है। एक CBT टेस्ट देकर अपनी तैयारी जांचें!
-                    </div>
-                  ) : (
-                    mistakes.map((m, idx) => (
-                      <div key={idx} className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-                        <p className="text-xs font-bold text-white">{m.question}</p>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="p-2.5 bg-red-950/30 border border-red-500/30 rounded-lg text-red-300">
-                            आपका उत्तर: {m.yourAns} (गलत)
-                          </div>
-                          <div className="p-2.5 bg-emerald-950/30 border border-em
+    // ऐप इनिशियलाइज़
+    renderConcepts();
+    renderMistakes();
+    renderVacancies();
+  </script>
+</body>
+            </html>
+                                                                                      

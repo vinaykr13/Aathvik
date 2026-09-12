@@ -1,0 +1,35 @@
+name: Build AATHVIK APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project ZIP
+        uses: actions/checkout@v4
+
+      - name: Extract AATHVIK project
+        run: |
+          unzip -o AATHVIK_GitHub_Build_Ready.zip -d aathvik
+          cd aathvik
+          chmod +x gradlew
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK
+        run: |
+          cd aathvik
+          ./gradlew :app:assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AATHVIK-debug-apk
+          path: aathvik/app/build/outputs/apk/debug/app-debug.apk

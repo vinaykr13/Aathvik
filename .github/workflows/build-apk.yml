@@ -13,7 +13,7 @@ jobs:
 
       - name: Extract AATHVIK project
         run: |
-          unzip -o AATHVIK_V4_Full_Feature.zip -d aathvik
+          unzip -o AATHVIK_V6_FIGHTER_Live_AI.zip -d aathvik
           cd aathvik
           chmod +x gradlew
 
